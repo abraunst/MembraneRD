@@ -1,4 +1,4 @@
-name = "RD"
+name = "MembraneRD"
 uuid = "b84b0a01-3127-49c3-bd25-e57a803e7c01"
 authors = ["Damiano Andreghetti, Alfredo Braunstein"]
 version = "1.0.0-DEV"
