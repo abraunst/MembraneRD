@@ -47,3 +47,15 @@ function ProgressMeasurer(T)
         end
     end
 end
+
+
+function PlotMeasurer(M; times)
+    next::Int = 1
+    function stats(t, s)
+        if t > times[next]
+            display(plot(M,s))
+            display(times[next])
+            next += 1
+        end
+    end
+end
