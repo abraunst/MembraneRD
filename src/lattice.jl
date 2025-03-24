@@ -1,9 +1,15 @@
 using LinearAlgebra, SparseArrays, Graphs
 
-Open(n) = spdiagm(1=>trues(n-1))
-Closed(n) = spdiagm(1=>trues(n-1), -n+1 => trues(1))
-chain(n; boundary) = boundary(n) + boundary(n)'
-rect(L1, L2; boundary=Closed) = kron(chain(L1; boundary),I(L2)) + kron(I(L1), chain(L2; boundary))
-hexa(L1, L2; boundary=Closed) = rect(L1,L2; boundary) + kron(boundary(L1),boundary(L2)) + kron(boundary(L1)',boundary(L2)')
+Open(L) = spdiagm(1=>trues(L-1))
+Closed(L) = spdiagm(1=>trues(L-1), -L+1 => trues(1))
+sym(x) = x .| x'
+rect(L; boundary=Closed) = sym(boundary(L))
+rect(L1, L...; boundary=Closed) = kron(rect(L1; boundary),I(prod(L))) .| kron(I(L1), rect(L...; boundary))
+dashed(L; boundary=Closed) = (A = spdiagm(1 => isodd.(1:L-1), -1 => iseven.(1:L-1)) |> dropzeros!; boundary === Closed && (A[1,end] = true); A) 
+hexa(L1, L2; boundary=Closed) = rect(L1,L2; boundary) .| sym(kron(dashed(L1; boundary),boundary(L2)))
 gen_square_lattice(L) = SimpleGraph(rect(L, L)), mod1.(1:L^2, L), fld1.(1:L^2, L)
-gen_hex_lattice(L) = SimpleGraph(hexa(L, L)), mod1.(1:L^2, L) .- 0.5 .* fld1.(1:L^2, L), 1.0.*fld1.(1:L^2, L)
+function gen_hex_lattice(L; boundary=Closed)
+    g = SimpleGraph(hexa(L, L; boundary))
+    x, y = mod1.(1:L^2, L), fld1.(1:L^2, L)
+    g, x .+ 0.5 .* isodd.(y), y
+end
