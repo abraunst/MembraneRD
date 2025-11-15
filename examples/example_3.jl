@@ -83,7 +83,7 @@ function run_RDN!(state::StateN, M::ModelN, T;
 
     t::Float64 = 0.0
     while !isempty(Q)
-        ((ev, m), i), dt = peek(Q; rng)
+        ((ev, m::Union{Int,Tuple{Int,Int}}), i), dt = peek(Q; rng)
         t += dt
         t > T && break # reached end time for simulation
         stats(t, state)

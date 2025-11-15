@@ -86,7 +86,7 @@ function build_model_state(L; rng = Random.default_rng())
     M,s
 end
 
-T = 2000.0
+T = 20000.0
 Tmeas = 10.0
 Nsave = 10
 L = 100
@@ -97,7 +97,7 @@ ran_ng = Random.Xoshiro(seed)
 M,s = build_model_state(L,rng=ran_ng)
 p = ProgressShower(T)
 m = Measurer(M; name="test_example_1", Nsave)
-pl = TimeFilter(Plotter(M); times=Tmeas:200:T)
+pl = TimeFilter(MembraneRD.Plotter(M); times=Tmeas:200:T)
 stats = TimeFilter(m, p, pl; times=Tmeas:Tmeas:T)
 
 @time run_RD!(s, M, T; stats, rng=ran_ng) 

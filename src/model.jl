@@ -1,22 +1,13 @@
-struct Model{G}
+Base.@kwdef struct Model{G, S, T, L1, L2, L3, L4}
+    species::S
     g::G
-    posx::Vector{Float64}
-    posy::Vector{Float64}
-    dA::Float64
-    dB::Float64
-    dEA::Float64
-    dEB::Float64
-    kAc::Float64
-    kBc::Float64
-    kAa::Float64
-    kAd::Float64
-    kBa::Float64
-    kBd::Float64
-	kAs::Float64
-	kBs::Float64
-    KMMA::Float64
-    KMMB::Float64
-    rho_0::Float64
+    rea::L1
+    att::L2
+    det::L3
+    dif::L4
+    rho_0::T
 end
+
+nspecies(M::Model) = length(M.species)
 
 Base.length(M::Model) = nv(M.g)
