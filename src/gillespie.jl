@@ -2,11 +2,10 @@ function run_RD!(state::State, M::Model, T;
         stats = (_, _)->nothing, 
         rng = Random.default_rng())
 
-    N = length(M)
-    Nspecies = nspecies(M)
-    Qn = [ExponentialQueue(N) for _ in M.species]
-    Qcat = [ExponentialQueue(N) for _ in M.rea]
-    Qatt = [ExponentialQueue(N)*0.0 for _ in M.att]
+    N, Nspecies  = nsites(M), nspecies(M)
+    Qn = [StaticExponentialQueue(N) for _ in M.species]
+    Qcat = [StaticExponentialQueue(N) for _ in M.rea]
+    Qatt = [StaticExponentialQueue(N)*0.0 for _ in M.att]
     
     function update(i::Int)
         for ((e,s,_,_,km),q) in zip(M.rea, Qcat)
@@ -22,7 +21,7 @@ function run_RD!(state::State, M::Model, T;
     end
 
 
-    foreach(update, 1:length(M))
+    foreach(update, 1:N)
 
     #arrival is chosen uniformly between its neighbours
     rand_neighbor(i) = rand(rng, neighbors(M.g, i))

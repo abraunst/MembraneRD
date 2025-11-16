@@ -10,4 +10,4 @@ end
 
 nspecies(M::Model) = length(M.species)
 
-Base.length(M::Model) = nv(M.g)
+nsites(M::Model) = nv(M.g)
