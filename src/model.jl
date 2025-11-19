@@ -1,6 +1,6 @@
-Base.@kwdef struct Model{G, S, T, L0, L1, L2, L3, L4}
+Base.@kwdef struct Model{GT, S, T, L0, L1, L2, L3, L4}
     species::S
-    g::G
+    G::GT
     rea::L0 = ()
     cat::L1 = ()
     att::L2 = ()
@@ -38,4 +38,4 @@ end
 
 nspecies(M::Model) = length(M.species)
 
-nsites(M::Model) = nv(M.g)
+nsites(M::Model) = nv(M.G)

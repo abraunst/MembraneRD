@@ -5,11 +5,11 @@ function build_model3(L)
     g, posx, posy = MembraneRD.gen_hex_lattice(L)
     N = length(posx)
     species =  1:9
-    A,B,C,EAB,EAC,EBA,EBC,ECA,ECB = 1:9
+    A,B,C,EAB,EAC,EBA,EBC,ECA,ECB = species
     rea = (EBA,B,A,1.0,1.0), (EAB,A,B,1.0,1.0),(EAC,A,C,1.0,1.0),(ECA,C,A,1.0,1.0),(EBC,B,C,1.0,1.0),(ECB,C,B,1.0,1.0)
     att = (EBA,A,1.0), (EBC,C,1.0), (EAB,B,1.0), (EAC,C,1.0), (ECA,A,1.0), (ECB,B,1.0)
     det = (EBA,1.0), (EBC,1.0), (EAB,1.0), (EAC,1.0), (ECA,1.0), (ECB,1.0)
-    dif = Tuple((i,1.0) for i in eachindex(species))
+    dif = (((i,1.0) for i in eachindex(species))...,)
     M = Model(; species, g, rea, att, det, dif, rho_0 = 0.0)
     (; M, mem = [fill(10*N, 3); fill(0, 6)], 
         cyto = [fill(0,3); fill(floor(Int, 0.5*N),6)], 

@@ -6,13 +6,13 @@ function ProgressShower(T)
 end
 
 function TimeFilter(callbacks...; times)
-    next::Int = 1
+    next = Ref(1)
     function stats(t, s)
-        while next <= lastindex(times) && times[next] <= t
+        while next[] <= lastindex(times) && times[next[]] <= t
             for cb in callbacks
-                cb(times[next], s)
+                cb(times[next[]], s)
             end
-            next += 1
+            next[] += 1
         end
     end
 end
@@ -22,7 +22,7 @@ function TicFilter(callbacks...; seconds=1)
     function stats(t, s)
         next = time()
         if next - last > seconds
-            last = next 
+            last = next
             for cb in callbacks
                 cb(t, s)
             end
@@ -30,20 +30,19 @@ function TicFilter(callbacks...; seconds=1)
     end
 end
 
-
 function hexagon(x, y, r)
     polygon([[(x[i]+r*cos(π/3*(k+3/2)),
                y[i]+r*sin(π/3*(k+3/2))) for k in 0:6] 
                     for i in eachindex(x,y)])
 end
 
-function Plotter(f, posx, posy; colors)
+function Plotter(f, posx, posy; colors, Δ=mm)
     function plot(t::Float64, s::State)
-        X, Y = mm .* posx, mm .* posy
+        X, Y = Δ .* posx, Δ .* posy
         (x0,x1),(y0,y1) = extrema(X), extrema(Y)
-        set_default_graphic_size(x1-x0+3mm, y1-y0+3mm)
+        set_default_graphic_size(x1-x0+3Δ, y1-y0+3Δ)
         compose(context(), 
-            hexagon(X, Y, 1mm),
+            hexagon(X, Y, 1Δ),
                 fill(s.membrane * colors)
         ) |> f
     end
