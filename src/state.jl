@@ -4,11 +4,11 @@ struct State
 end
 
 function State(M::Model, totmembrane::Vector, cytosol::Vector; rng)
-    Nspecies = nspecies(M)
+    Nspecies, Nsites = nspecies(M), nsites(M)
     membrane = zeros(nv(M.g), Nspecies)
-    for m in axes(membrane, 2)
+    for m in 1:Nspecies
         for _ in 1:totmembrane[m]
-            membrane[rand(rng, axes(membrane,1)), m] += 1
+            membrane[rand(rng, 1:Nsites), m] += 1
         end
     end
     State(membrane, cytosol)
