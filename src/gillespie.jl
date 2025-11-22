@@ -1,6 +1,5 @@
 @enum Event evdif evatt evdet evcat evrea
 
-
 function run_RD!(state::State, M::Model, T; 
         stats = (_, _)->nothing, 
         rng = Random.default_rng())
@@ -10,7 +9,7 @@ function run_RD!(state::State, M::Model, T;
     Qcat = [StaticExponentialQueue(N) for _ in M.cat]
     Qrea = [StaticExponentialQueue(N) for _ in M.rea]
     Qatt = [StaticExponentialQueue(N)*0.0 for _ in M.att]
-    
+
     function update(i::Int)
         for ((e,s,_,_,km),q) in zip(M.cat, Qcat)
             q[i] = state.membrane[i,e]  / (1 + km/state.membrane[i,s])
@@ -41,7 +40,7 @@ function run_RD!(state::State, M::Model, T;
 
     t::Float64 = 0.0
     while !isempty(Q)
-        ((ev::Event,m::Int),i::Int),dt::Float64 = peek(Q; rng)
+        ((ev,m),i),dt = peek(Q; rng)::Tuple{Tuple{Tuple{Event,Int},Int},Float64}
         t += dt
         t > T && break # reached end time for simulation
         stats(t, state)
@@ -76,5 +75,5 @@ function run_RD!(state::State, M::Model, T;
             update(i)
         end
     end
-	stats(T, state)
+    stats(T, state)
 end
