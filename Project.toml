@@ -17,6 +17,7 @@ PNGFiles = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+VideoIO = "d6d074c3-1acf-5d4c-9a43-ef38773959a2"
 
 [compat]
 ColorVectorSpace = "0.10.0"
@@ -33,6 +34,7 @@ ProgressMeter = "1"
 Random = "1"
 SparseArrays = "1.12.0"
 StableRNGs = "1.0.2"
+VideoIO = "1.4.0"
 julia = "1.6.7"
 
 [extras]
