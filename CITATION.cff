@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite as follows."
+authors:
+- family-names: "Andreghetti"
+  given-names: "Damiano"
+- family-names: "Braunstein"
+  given-names: "Alfredo"
+- family-names: "Dall'Asta"
+  given-names: "Luca"
+- family-names: "Gamba"
+  given-names: "Andrea"
+title: "Membrane Reaction-Diffusion (MembraneRD)"
+version: 1.0.0
+url: https://github.com/damiano-andreghetti/MembraneRD.jl
+
