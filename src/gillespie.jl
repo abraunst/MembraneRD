@@ -3,11 +3,12 @@
 function build_queues(M)
     N = nsites(M)
     Qn = Tuple(StaticExponentialQueue(N) for _ in M.species)
+    Qdif = Tuple(Qn[m] * d for (m,d) in M.dif)
     Qcat = Tuple(StaticExponentialQueue(N) for _ in M.cat)
     Qrea = Tuple(StaticExponentialQueue(N) for r in M.rea)
     Qatt = Tuple(Qn[m1]*0.0 for (m,m1,ka) in M.att)
     Q = NestedQueue(
-        ((evdif,m) => Qn[m] * d for (m,d) in M.dif)...,
+        ((evdif,m) => q for ((m,_),q) in zip(M.dif, Qdif))...,
         ((evatt,m) => q for ((m,_,_),q) in zip(M.att, Qatt))...,
         ((evdet,m) => Qn[m] * kd for (m,kd) in M.det)...,
         ((evcat,r) => q*kc for (r,(_,_,_,kc,_),q) in zip(eachindex(M.cat),M.cat, Qcat))...,
@@ -17,12 +18,15 @@ function build_queues(M)
     (Qn, Qcat, Qrea, Qatt, Q)
 end
 
+
 function run_RD!(state::State, M::Model, T; 
         stats = (_...,)->nothing, 
         rng = Random.default_rng(),
         queues = build_queues(M))
 
     Qn, Qcat, Qrea, Qatt, Q = queues
+    ll = 0.0
+    dll = zeros(length(Q.qlist))
 
     function update(i::Int)
         for ((e,s,_,_,km),q) in zip(M.cat, Qcat)
@@ -43,7 +47,7 @@ function run_RD!(state::State, M::Model, T;
 
     foreach(update, 1:nsites(M))
             
-    println("starting simulation, $(length(Q)) events in the queue")
+    #println("starting simulation, $(length(Q)) events in the queue")
 
     t::Float64 = 0.0
     while !isempty(Q)
@@ -51,6 +55,11 @@ function run_RD!(state::State, M::Model, T;
         t += dt
         t > T && break # reached end time of simulation
         stats(t, state, ev, m, i)
+        #ll += -sum(Q)*dt + log(Q[((ev,m),i)])
+        #for (i,q) in enumerate(Q.qlist)
+        #    dll[i] += sum(q.q)
+        #end
+        
         @inbounds if ev == evdif # diffusion
             #arrival is chosen uniformly between its neighbours
             j = rand(rng, neighbors(M.G, i))
@@ -72,7 +81,7 @@ function run_RD!(state::State, M::Model, T;
             state.cytosol[m] += 1
             update(i)
         else # ev == evrea # reaction
-            s, p = M.rea[m]
+            s, p, _ = M.rea[m]
             for m in s
                 state.membrane[i,m] -= 1
             end
@@ -83,4 +92,6 @@ function run_RD!(state::State, M::Model, T;
         end
     end
     stats(T, state, evend, 0, 0)
+    ll += -sum(Q)*(T-t)
+    return ll,dll
 end
